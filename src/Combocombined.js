@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import G6 from '@antv/g6';
 import insertCss from 'insert-css';
+import chroma from "chroma-js";
 
 // define the CSS with the id of your menu
 insertCss(`
@@ -5195,6 +5196,17 @@ const data1 = {
     ]
 }
 
+const animateCfg = { duration: 200, easing: "easeCubic" };
+const edgeColors = data.edges.map(() => chroma.random().hex());
+const modifiedEdges = data.edges.map((edge, index) => {
+  return {
+    ...edge,
+    style: {
+      ...edge.style,
+      stroke: edgeColors[index],
+    },
+  };
+});
 
 // cache the initial combo children infomation
 const comboChildrenCache = {};
@@ -5285,39 +5297,144 @@ const graph = new G6.Graph({
   fitViewPadding: 50,
   animate: true,
   minZoom: 0.00000001,
+  
 //   plugins: [contextMenu],
   layout: {
     type: 'comboCombined',
-    spacing: 5,
-    outerLayout: new G6.Layout['forceAtlas2']({
-      kr: 10
-    })
+    center: [ 200, 200 ], 
+        // The center of the graph by default
+    linkDistance: 50,         // Edge length
+    nodeStrength: 70,
+    nodeSize: 74,
+    nodeSpacing: 100,
+    edgeStrength: 0.1,
+    preventNodeOverlap: true,
+    // preventComboOverlap:true,
+    comboCollideStrength:0.9,
+    comboSpacing:600,
+    outerLayout: new G6.Layout['dagre']({
+        ranksep: 100,
+        nodesep: 100,
+    }),
+    // innerLayout: new G6.Layout['dagre']({
+    //     ranksep: 100,
+    //     nodesep: 100,
+    // }),
+    
   },
-  defaultNode: {
-    size: 15,
+//   defaultNode: {
+//     size:15,
+//     style: {
+//       lineWidth: 2,
+//       fill: '#C6E5FF',
+//     },
+//   },
+defaultNode: {
+    type: "image",
+    size: 74,
+    img: 'data:image/svg+xml,<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools --><svg width="256px" height="256px" viewBox="-102.4 -102.4 1228.80 1228.80" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="%23000000" transform="rotate(0)matrix(-1, 0, 0, 1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"/><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="%23CCCCCC" stroke-width="28.672000000000004"><path d="M77 403.4v228.5c1.5 93.7 195.7 183.5 435 183.5s433.4-89.8 435-183.5V403.4H77z" fill="%231B9BDB"/><path d="M947 402.7c0 99.4-194.8 194-435 194s-435-94.6-435-194 194.8-180 435-180 435 80.5 435 180z" fill="%233ED6FF"/><path d="M474.1 311.4H503l0.1 63.2h29.5l-0.7-63.2h28.9l-43.7-75.1zM533 417.2h-29.9l0.1 73.9h-30.6l46.2 75.2 45.5-75.2h-30.6zM654.5 380.9l-1.4-30-72.1 45 76.4 45.1-1.4-30h126.2l-2.6-30.1zM381.1 380.9h-125l-2.3 30.1H380l-1.1 30 75.9-45.1-72.5-45z" fill="%23FFFFFF"/></g><g id="SVGRepo_iconCarrier"><path d="M77 403.4v228.5c1.5 93.7 195.7 183.5 435 183.5s433.4-89.8 435-183.5V403.4H77z" fill="%231B9BDB"/><path d="M947 402.7c0 99.4-194.8 194-435 194s-435-94.6-435-194 194.8-180 435-180 435 80.5 435 180z" fill="%233ED6FF"/><path d="M474.1 311.4H503l0.1 63.2h29.5l-0.7-63.2h28.9l-43.7-75.1zM533 417.2h-29.9l0.1 73.9h-30.6l46.2 75.2 45.5-75.2h-30.6zM654.5 380.9l-1.4-30-72.1 45 76.4 45.1-1.4-30h126.2l-2.6-30.1zM381.1 380.9h-125l-2.3 30.1H380l-1.1 30 75.9-45.1-72.5-45z" fill="%23FFFFFF"/></g></svg>',
     style: {
-      lineWidth: 2,
-      fill: '#C6E5FF',
+      fill: "#DEE9FF",
+      stroke: "#5B8FF9",
+    },
+    labelCfg: {
+      style: {
+        fontSize: 40,
+      },
+      position: "bottom",
+      offset: 1,
     },
   },
   defaultEdge: {
     size: 2,
     color: '#e2e2e2',
+    // style: {
+    //         //   lineWidth: 2,
+    //         //   cursor: true,
+    //         //   opacity: 0.6,
+    //           endArrow: {
+    //             path: G6.Arrow.triangle(10, 25, 100),
+    //             d: 100,
+    //             fill: "#999",
+    //           },
+    //           startArrow: {
+    //             path: G6.Arrow.triangle(10, 25, 100),
+    //             d: 100,
+    //             fill: "#999",
+    //           },
+    //         },
+    
+    
   },
+// defaultEdge: {
+//     type: "line",
+//     labelCfg: {
+//       autoRotate: true,
+//       style: {
+//         fontSize: 40,
+//         background: {
+//           // fill: "#999",
+
+//           stroke: "#FDFEFF",
+//           padding: [1, 1, 1, 1],
+//           radius: 6,
+//         },
+//         fillOpacity: 0,
+//         strokeOpacity: 0,
+//       },
+//     },
+//     style: {
+//       lineWidth: 2,
+//       cursor: true,
+//       opacity: 0.6,
+//     //   endArrow: {
+//     //     path: G6.Arrow.triangle(10, 25, 100),
+//     //     d: 100,
+//     //     fill: "#999",
+//     //   },
+//     //   startArrow: {
+//     //     path: G6.Arrow.triangle(10, 25, 100),
+//     //     d: 100,
+//     //     fill: "#999",
+//     //   },
+//     },
+//     edgeStateStyles: {
+//       highlight: {
+//         lineWidth: 5,
+//       },
+//     },
+//     loopCfg: {
+//       position: "top",
+//     },
+//     curveOffset: 100,
+//   },
   defaultCombo: {
+    // size: 500,
+    labelCfg: {
+      style: {
+        fontSize: 40,
+      },
+    },
     collapsedSubstituteIcon: {
       show: true,
       img: 'https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*IEQFS5VtXX8AAAAAAAAAAABkARQnAQ',
-      width: 68,
-      height: 68
+      width: 468,
+      height: 468
     }
   },
   modes: {
     default: ['drag-combo', 'drag-node', 'drag-canvas', 'zoom-canvas', 'collapse-expand-combo'],
   },
 });
-graph.data(data);
-graph.render();
+graph.data({
+    nodes: data?.nodes,
+    edges: modifiedEdges,
+    combos:data?.combos
+  });
+graph.render(); 
+
+ 
+
 
 
 const contextMenu = new G6.Menu({
